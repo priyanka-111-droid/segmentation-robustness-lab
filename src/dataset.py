@@ -62,6 +62,7 @@ def build_image_metadata(annotation_data: dict) -> pd.DataFrame:
 
         size_counts = Counter()
         categories = set()
+        category_counts = Counter()
 
         for annotation in annotations:
             area = annotation.get("area", 0)
@@ -69,6 +70,7 @@ def build_image_metadata(annotation_data: dict) -> pd.DataFrame:
 
             size_counts[size] += 1
             categories.add(annotation["category_id"])
+            category_counts[annotation["category_id"]] += 1
 
         total_objects = sum(size_counts.values())
 
@@ -96,6 +98,7 @@ def build_image_metadata(annotation_data: dict) -> pd.DataFrame:
                 "large_fraction": large_fraction,
                 "num_categories": len(categories),
                 "categories": sorted(categories),
+                "category_counts": dict(category_counts),
             }
         )
 
