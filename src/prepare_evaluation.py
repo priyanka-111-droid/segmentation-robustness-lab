@@ -83,14 +83,14 @@ def main():
 
     parser.add_argument(
         "--baseline",
-        default="data/cohorts/baseline.csv",
-        help="Baseline cohort CSV.",
+        default="protocol_manifests/baseline.csv",
+         help="Frozen baseline cohort manifest."
     )
 
     parser.add_argument(
         "--shifted",
-        default="data/cohorts/small_object_shift.csv",
-        help="Small-object-shift cohort CSV.",
+        default="protocol_manifests/small_object_shift.csv",
+        elp="Frozen small-object-shift cohort manifest.",
     )
 
     parser.add_argument(

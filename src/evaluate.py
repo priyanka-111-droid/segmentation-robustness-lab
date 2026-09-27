@@ -122,15 +122,14 @@ def build_coco_predictions(
 
                 binary_mask = (mask > 0.5).astype("uint8")
 
-                # COCO requires Fortran-contiguous masks for RLE encoding.
-                binary_mask = binary_mask.astype("uint8")
-                binary_mask = binary_mask[:, :, None]
-
                 from pycocotools import mask as mask_utils
 
-                rle = mask_utils.encode(
-                    binary_mask[:, :, 0]
-                )
+                binary_mask = (mask > 0.5).astype("uint8", order="F")
+
+                rle = mask_utils.encode(binary_mask)
+
+                rle["counts"] = rle["counts"].decode("utf-8")
+                prediction["segmentation"] = rle
 
                 # pycocotools returns bytes for counts.
                 rle["counts"] = rle["counts"].decode("utf-8")
@@ -214,13 +213,15 @@ def main():
     )
 
     parser.add_argument(
-        "--baseline",
-        default="data/cohorts/baseline.csv",
+    "--baseline",
+    default="protocol_manifests/baseline.csv",
+    help="Frozen baseline cohort manifest.",
     )
 
     parser.add_argument(
         "--shifted",
-        default="data/cohorts/small_object_shift.csv",
+        default="protocol_manifests/small_object_shift.csv",
+        help="Frozen small-object-shift cohort manifest.",
     )
 
     parser.add_argument(

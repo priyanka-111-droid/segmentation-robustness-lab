@@ -1,0 +1,73 @@
+experiment:
+  name: small_object_distribution_shift
+  question: "How does segmentation performance change under a natural shift toward smaller objects in the evaluation distribution?"
+
+model:
+  architecture: YOLO11n-seg
+  package: ultralytics
+  package_version: "8.4.163"
+  weights: yolo11n-seg.pt
+  weights_sha256: "55ed65c56c91713d23e8402371c6c49a6fd84f257f7dce452e8d70e41dcbe152"
+
+dataset:
+  name: COCO 2017 validation
+  annotation_file: instances_val2017.json
+  image_directory: val2017
+
+object_size_definition:
+  source: COCO annotation area
+  small: "area < 32^2"
+  medium: "32^2 <= area < 96^2"
+  large: "area >= 96^2"
+
+cohorts:
+  images_per_cohort: 200
+  random_seed: 42
+  baseline:
+    rule: "small_fraction <= 0.35"
+    selection: "random sample of 200 eligible images"
+  small_object_shift:
+    rule: "small_fraction >= 0.50"
+    selection: "greedy selection from a random candidate pool of up to 100 eligible images at each step, minimizing total variation distance between the current shifted-cohort category distribution and the fixed baseline category distribution"
+  category_matching:
+    representation: "per-image COCO category counts aggregated across each cohort"
+    distance: "total variation distance"
+    candidate_pool_sample_size: 100
+    baseline_distribution: "computed once from the fixed baseline cohort and held constant during shifted-cohort construction"
+  overlap: false
+  constructed_without_model_outcomes: true
+
+inference:
+  image_size: 640
+  confidence_threshold: 0.25
+  iou_threshold: 0.70
+
+evaluation:
+  primary_metric: "mask mAP@50:95"
+  secondary_metrics:
+    - "mask mAP@50"
+    - "mask mAP@75"
+    - "box mAP@50:95"
+    - "precision"
+    - "recall"
+    - "COCO AR_small (small-object average recall)"
+    - "size-conditioned performance"
+  primary_failure_threshold:
+    relative_degradation: 0.15
+  secondary_diagnostic_threshold:
+    metric: "COCO AR_small"
+    relative_degradation: 0.20
+
+calculation:
+  relative_change: "(shifted - baseline) / baseline"
+  primary_failure_rule: "failure if relative mask mAP@50:95 degradation exceeds 15%"
+
+manifests:
+  baseline: protocol_manifests/baseline.csv
+  small_object_shift: protocol_manifests/small_object_shift.csv
+
+reproduction:
+  python_version: "3.9.6"
+  environment_file: requirements.txt
+  preparation_command: "python -m src.prepare_evaluation"
+  evaluation_command: "python -m src.evaluate"
