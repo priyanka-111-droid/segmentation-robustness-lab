@@ -8,3 +8,11 @@ results/
 
 .ipynb_checkpoints/
 .DS_Store
+
+# Model weights
+*.pt
+*.onnx
+*.pth
+
+# Generated evaluation artifacts
+results/
