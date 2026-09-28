@@ -90,7 +90,7 @@ def main():
     parser.add_argument(
         "--shifted",
         default="protocol_manifests/small_object_shift.csv",
-        elp="Frozen small-object-shift cohort manifest.",
+        help="Frozen small-object-shift cohort manifest.",
     )
 
     parser.add_argument(
