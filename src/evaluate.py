@@ -120,19 +120,15 @@ def build_coco_predictions(
                         interpolation=cv2.INTER_NEAREST,
                     )
 
-                binary_mask = (mask > 0.5).astype("uint8")
+            
 
                 from pycocotools import mask as mask_utils
 
                 binary_mask = (mask > 0.5).astype("uint8", order="F")
-
                 rle = mask_utils.encode(binary_mask)
 
-                rle["counts"] = rle["counts"].decode("utf-8")
-                prediction["segmentation"] = rle
-
-                # pycocotools returns bytes for counts.
-                rle["counts"] = rle["counts"].decode("utf-8")
+                if isinstance(rle["counts"], bytes):
+                    rle["counts"] = rle["counts"].decode("utf-8")
 
                 prediction["segmentation"] = rle
 
