@@ -1,0 +1,56 @@
+Robustness Evaluation Execution Receipt
+
+Protocol freeze commit:
+d243359b543a811b84f251565fe58cd5e5bb2e8c
+
+Execution HEAD:
+4901a8327244b6c86ed533cb26c1547010ce9f9c
+
+Execution-fix commits:
+c5f700a Fix evaluation preparation help argument
+4901a83 Handle COCO RLE counts across pycocotools versions
+
+Executed evaluation command:
+python -m src.evaluate 2>&1 | tee results/raw_evaluation_output.txt
+
+Python:
+3.9.6
+
+Python executable:
+/Users/Priyanka/.segmentation/bin/python
+
+Model:
+yolo11n-seg.pt
+
+Model SHA256:
+55ed65c56c91713d23e8402371c6c49a6fd84f257f7dce452e8d70e41dcbe152
+
+Ultralytics:
+8.4.163
+
+Inference configuration:
+Image size: 640
+Confidence threshold: 0.25
+IoU threshold: 0.70
+
+Cohorts:
+Baseline: 200 images
+Small-object shift: 200 images
+
+Evaluation:
+Primary metric: mask mAP@50:95
+Primary failure threshold: 15% relative degradation
+Secondary diagnostic: COCO AR_small
+Secondary threshold: 20% relative degradation
+
+Result artifacts:
+evidence/raw_metrics.json
+evidence/raw_evaluation_output.txt
+
+Pinned environment dependencies:
+numpy==1.26.4
+pandas==2.3.3
+pycocotools==2.0.11
+pytest==8.4.2
+PyYAML==6.0.3
+ultralytics==8.4.163
